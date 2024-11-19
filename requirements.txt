@@ -1,0 +1,4 @@
+beautifulsoup4==4.11.1
+langchain_groq==0.2.1
+playwright==1.47.0
+python-dotenv==1.0.1
