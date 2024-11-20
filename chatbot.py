@@ -1,4 +1,4 @@
-from groq import Groq
+from langchain_groq import ChatGroq
 from dotenv  import load_dotenv
 import os
 from scraping import raspar_noticias # Importa a função de raspagem de notícias
@@ -6,8 +6,10 @@ from scraping import raspar_noticias # Importa a função de raspagem de notíci
 # Carrega as variáveis de ambiente do arquivo .env, incluindo a chave da API do OpenAI.
 load_dotenv()
 
-# Configura o cliente do modelo de linguagem
-cliente = Groq(
+# Configura o modelo de linguagem
+cliente = ChatGroq(
+    model='llama-3.1-70b-versatile',
+    temperature=0, # Controla a criatividade do modelo
     api_key=os.getenv('GROQ_API_KEY')
 )
 
@@ -34,17 +36,13 @@ while True:
         break
 
     # Adiciona a mensagem do usuário no histórico
-    mensagens.append({'role': 'user', 'content': entrada_usuario})
+    mensagens.append({'role': 'human', 'content': entrada_usuario})
 
     # Gera uma resposta usando o modelo Llama
-    resposta = cliente.chat.completions.create(
-        messages=mensagens,
-        temperature=0, # Controla a criatividade do modelo
-        model='llama-3.1-70b-versatile'
-    )
+    resposta = cliente.invoke(mensagens)
 
     # Adiciona a resposta da IA no histórico
-    mensagens.append({'role': 'assistant', 'content': resposta.choices[0].message.content})
+    mensagens.append({'role': 'ai', 'content': resposta.content})
 
     # Exibe a resposta no terminal
-    print(f"Assistente: {resposta.choices[0].message.content}")
+    print(f"Assistente: {resposta.content}")
